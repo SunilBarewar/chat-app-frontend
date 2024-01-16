@@ -13,7 +13,7 @@ import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import AuthInputField from "../../components/AuthInputField";
 import { useState } from "react";
 import { loginUser } from "../../api/userRequests";
-import { ChatState } from "../../context/ChatContext";
+import { useChat } from "../../context/ChatContext";
 
 const Auth = () => {
   const [password, setPassword] = useState("");
@@ -21,7 +21,7 @@ const Auth = () => {
   const [loading, setLoding] = useState(false);
 
   const navigate = useNavigate();
-  const { setUser } = ChatState();
+  const { setUser } = useChat();
 
   const toast = useToast();
   const handleLogin = async (e) => {

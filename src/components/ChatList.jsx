@@ -9,13 +9,13 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { MdOutlineGroupAdd, MdSearch } from "react-icons/md";
-import { ChatState } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext";
 import SearchDrawer from "./SearchDrawer";
 import MyChats from "./MyChats";
 import GroupModal from "./Modals/GroupModal";
 
 const ChatList = () => {
-  const { selectedChat, setSelectedChat } = ChatState();
+  const { selectedChat, setSelectedChat } = useChat();
 
   return (
     <Box

@@ -1,49 +1,22 @@
 // ChatMessages.js
 
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  Box,
-  Text,
-  Flex,
-  Avatar,
-  Image,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Input,
-  InputRightElement,
-  IconButton,
-  InputGroup,
-  useToast,
-  Spinner,
-  FormControl,
-} from "@chakra-ui/react";
-import { DrawerContext } from "../context/DrawerContext";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { MdSend, MdOutlineAttachFile } from "react-icons/md";
-import { ChatState } from "../context/ChatContext";
-import getChatMember from "../utils/getChatMember";
-import {
-  getMessagesOfUser,
-  saveMessage,
-  uploadImage,
-} from "../api/messageRequests";
-import io from "socket.io-client";
+import React, { useEffect, useRef, useState } from "react";
+import { Flex, useToast } from "@chakra-ui/react";
+
+import { useChat } from "../context/ChatContext";
+
+import { uploadImage } from "../api/messageRequests";
 import MessagesContainer from "./MessagesContainer";
+import { useSocket } from "../context/SocketProvider";
+import MessageBoxNav from "./MessageBoxNav";
+import MessageInput from "./MessageInput";
 
 const ChatMessages = () => {
-  const { setSelectedChat, selectedChat, user } = ChatState();
-  const [messages, setMessages] = useState([]);
+  const { selectedChat } = useChat();
+  const { joinRoom, messages } = useSocket();
+  // const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [newMessage, setNewMessage] = useState("");
-  const [socketConnected, setSocketConnected] = useState(false);
+
   // const messages = [
   //   { text: "Hey!", isSent: false },
   //   { text: "Hi! How's it going?", isSent: true },
@@ -168,80 +141,80 @@ const ChatMessages = () => {
   };
   const toast = useToast();
 
-  const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const { data } = await getMessagesOfUser(selectedChat.id);
-      setMessages(data);
-      setLoading(false);
-      console.log(data);
-      socket.current?.emit("join chat", selectedChat.id);
-    } catch (error) {
-      toast({
-        title: "Error Occured!",
-        description: "Failed to Load the Messages",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top right",
-      });
-    }
-  };
-  const sendMessage = async () => {
-    if (!newMessage || !selectedChat) return;
+  // const fetchMessages = async () => {
+  //   try {
+  //     // setLoading(true);
+  //     // const { data } = await getMessagesOfUser(selectedChat.id);
+  //     // setMessages(data);
+  //     // setLoading(false);
+  //     // console.log(data);
+  //     socket.current?.emit("join chat", selectedChat.id);
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error Occured!",
+  //       description: "Failed to Load the Messages",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //       position: "top right",
+  //     });
+  //   }
+  // };
 
-    try {
-      const formData = {
-        content: newMessage,
-        contentType: "text",
-        chatId: selectedChat.id,
-        senderID: user.id,
-      };
+  // const sendMessage = async () => {
+  //   if (!newMessage || !selectedChat) return;
 
-      const { data } = await saveMessage(formData);
-      setNewMessage("");
-      setMessages([...messages, data]);
-      socket.current.emit("new message", {
-        message: data,
-        chat: selectedChat,
-      });
-      // console.log(data);
-    } catch (error) {
-      toast({
-        title: "Error Occured!",
-        description: "Failed to send the Message",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top right",
-      });
-    }
-  };
+  //   try {
+  //     const formData = {
+  //       content: newMessage,
+  //       contentType: "text",
+  //       chatID: selectedChat.id,
+  //       senderID: user.id,
+  //     };
+
+  //     // const { data } = await saveMessage(formData);
+  //     setNewMessage("");
+  //     // setMessages([...messages, formData]);
+  //     socket.current.emit("new.message", formData);
+  //     // console.log(data);
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error Occured!",
+  //       description: "Failed to send the Message",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //       position: "top right",
+  //     });
+  //   }
+  // };
+  // useEffect(() => {
+  //   socket.current = io("http://localhost:5000");
+  //   // socket.current.emit("setup", user);
+  //   // socket.current.on("connected", () => setSocketConnected(true));
+  // }, []);
+
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
-    socket.current.emit("setup", user);
-    // socket.current.on("connected", () => setSocketConnected(true));
-  }, []);
-  useEffect(() => {
-    fetchMessages();
-
-    return () => {
-      socket.current?.emit("close chat", selectedChat.id);
-    };
+    if (!selectedChat) return;
+    // fetchMessages();
+    joinRoom(selectedChat.id);
+    // return () => {
+    //   socket.current?.emit("close chat", selectedChat.id);
+    // };
   }, [selectedChat]);
 
-  useEffect(() => {
-    socket.current.on("message recieved", (newMessageRecieved) => {
-      console.log("message recieved => ", newMessageRecieved);
-      if (
-        !selectedChat || // if chat is not selected or doesn't match current chat
-        selectedChat.id !== newMessageRecieved.chatID
-      ) {
-      } else {
-        setMessages([...messages, newMessageRecieved]);
-      }
-    });
-  });
+  // useEffect(() => {
+  //   socket.current.on("new.message", (newMessageRecieved) => {
+  //     console.log("received new message");
+  //     if (
+  //       !selectedChat || // if chat is not selected or doesn't match current chat
+  //       selectedChat.id !== newMessageRecieved.chatID
+  //     ) {
+  //     } else {
+  //       setMessages([...messages, newMessageRecieved]);
+  //     }
+  //   });
+  // });
   return (
     <Flex
       flex="1"
@@ -250,82 +223,9 @@ const ChatMessages = () => {
       overflow={"hidden"}
       position={"relative"}
     >
-      <Flex
-        p={"8px"}
-        bg="gray.50"
-        borderLeft={"1px"}
-        borderLeftColor={"gray.300"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <Flex alignItems={"center"} justifyContent={"space-between"} gap={4}>
-          <Avatar
-            bg="teal.500"
-            src={
-              selectedChat.isGroupChat
-                ? ""
-                : getChatMember(selectedChat.members, user.id).profilePic
-            }
-          />
-
-          <Text noOfLines={1} color={"gray.900"}>
-            {selectedChat.isGroupChat
-              ? selectedChat.chatName
-              : getChatMember(selectedChat.members, user.id).name}
-          </Text>
-        </Flex>
-
-        <Menu isLazy>
-          <MenuButton>
-            <BsThreeDotsVertical fontSize={20} />
-          </MenuButton>
-          <MenuList boxSize={"50px"}>
-            <MenuItem onClick={() => setSelectedChat("")}>Close chat</MenuItem>
-          </MenuList>
-        </Menu>
-      </Flex>
+      <MessageBoxNav />
       <MessagesContainer loading={loading} messages={messages} />
-      <Flex bg={"gray.50"} p={"8px"} gap={2}>
-        <Box>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-            accept="image/*"
-          />
-
-          <IconButton
-            icon={
-              <MdOutlineAttachFile
-                fontSize={"25px"}
-                onClick={handleButtonClick}
-              />
-            }
-          />
-        </Box>
-        <InputGroup>
-          <FormControl
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && newMessage) {
-                sendMessage();
-              }
-            }}
-          >
-            <Input
-              placeholder="Type a message"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-            />
-          </FormControl>
-
-          <InputRightElement>
-            <IconButton
-              icon={<MdSend fontSize={"25px"} onClick={sendMessage} />}
-            />
-          </InputRightElement>
-        </InputGroup>
-      </Flex>
+      <MessageInput />
     </Flex>
   );
 };

@@ -18,13 +18,13 @@ import useFetchUsers from "../../hooks/useFetchUsers";
 import ChatSkeleton from "../Skeletons/ChatSkeleton";
 import UserListItem from "../User/UserListItem";
 import UserBadgeItem from "../User/UserBadgeItem";
-import { ChatState } from "../../context/ChatContext";
+import { useChat } from "../../context/ChatContext";
 import { createGroupChat, fetchChats } from "../../api/chatRequests";
 
 const GroupModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const groupNameRef = useRef();
-  const { user, setChats } = ChatState();
+  const { user, setChats } = useChat();
   const { setSearchQuery, searchResult, loading } = useFetchUsers();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [groupName, setGroupName] = useState("");

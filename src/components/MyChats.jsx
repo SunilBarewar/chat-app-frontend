@@ -1,11 +1,11 @@
 import { Avatar, Box, Divider, Flex, Text } from "@chakra-ui/react";
-import { ChatState } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext";
 import { useEffect } from "react";
 import { fetchChats } from "../api/chatRequests";
 import getChatMember from "../utils/getChatMember";
 
 const MyChats = ({}) => {
-  const { setSelectedChat, selectedChat, chats, setChats, user } = ChatState();
+  const { setSelectedChat, selectedChat, chats, setChats, user } = useChat();
   useEffect(() => {
     const cachedChats = JSON.parse(localStorage.getItem("chats"));
     if (cachedChats?.length) {

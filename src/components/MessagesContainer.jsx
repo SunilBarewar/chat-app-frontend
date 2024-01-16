@@ -1,10 +1,10 @@
 import { Box, Spinner } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
 import Message from "./Message";
-import { ChatState } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext";
 
 const MessagesContainer = ({ loading, messages }) => {
-  const { user } = ChatState();
+  const { user } = useChat();
   const chatContainerRef = useRef(null);
   useEffect(() => {
     // Scroll to the bottom of the chat container after rendering messages

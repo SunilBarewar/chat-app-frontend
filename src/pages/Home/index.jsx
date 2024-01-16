@@ -1,14 +1,12 @@
 import React from "react";
 import { Flex, Container } from "@chakra-ui/react";
-import ChatMessages from "../../components/ChatMessages";
 import ChatList from "../../components/ChatList";
-import Navbar from "../../components/Navbar";
-import DrawerContextProvider from "../../context/DrawerContext";
 import ChatBox from "../../components/ChatBox";
+import SocketProvider from "../../context/SocketProvider";
 
 const App = () => {
   return (
-    <DrawerContextProvider>
+    <SocketProvider>
       <Container minW={"100%"} h={"100vh"} p={0} boxShadow="sm">
         {/* <Flex flexDir="column" h="100%" overflow="hidden"> */}
         {/* <Navbar /> */}
@@ -18,7 +16,7 @@ const App = () => {
         </Flex>
         {/* </Flex> */}
       </Container>
-    </DrawerContextProvider>
+    </SocketProvider>
   );
 };
 

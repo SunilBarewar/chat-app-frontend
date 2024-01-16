@@ -5,10 +5,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import Signup from "./pages/Auth/Signup";
-import { ChatState } from "./context/ChatContext";
+import { useChat } from "./context/ChatContext";
 
 function App() {
-  const { user } = ChatState();
+  const { user } = useChat();
   return (
     <>
       <Container maxW="container.xl" w="100%" p={0} centerContent bg="white">

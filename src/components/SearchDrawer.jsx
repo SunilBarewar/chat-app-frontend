@@ -19,14 +19,14 @@ import UserListItem from "./User/UserListItem";
 import ChatSkeleton from "./Skeletons/ChatSkeleton";
 import useFetchUsers from "../hooks/useFetchUsers";
 import { createOneOnOneChat } from "../api/chatRequests";
-import { ChatState } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext";
 
 const SearchDrawer = ({ children }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const inputRef = useRef();
   const { setSearchQuery, searchResult, loading } = useFetchUsers();
   const toast = useToast();
-  const { chats, setChats, setSelectedChat } = ChatState();
+  const { chats, setChats, setSelectedChat } = useChat();
   const accessChat = async (selectedUser) => {
     try {
       const { data } = await createOneOnOneChat({ userId: selectedUser.id });

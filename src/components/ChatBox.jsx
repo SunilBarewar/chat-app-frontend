@@ -1,9 +1,9 @@
 import React from "react";
-import { ChatState } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext";
 import ChatMessages from "./ChatMessages";
 import { Box, Center, Text } from "@chakra-ui/react";
 const ChatBox = () => {
-  const { selectedChat } = ChatState();
+  const { selectedChat } = useChat();
   return (
     <Box
       flex={1}

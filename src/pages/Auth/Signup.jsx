@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import AuthInputField from "../../components/AuthInputField";
-import { ChatState } from "../../context/ChatContext";
+import { useChat } from "../../context/ChatContext";
 import { registerUser } from "../../api/userRequests";
 
 const Signup = () => {
@@ -22,7 +22,7 @@ const Signup = () => {
   const [loading, setLoding] = useState(false);
 
   const navigate = useNavigate();
-  const { setUser } = ChatState();
+  const { setUser } = useChat();
 
   const toast = useToast();
   const handleSignup = async (e) => {
